@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 #include <unistd.h>
 #include <termios.h>
 #include <sys/ioctl.h>
@@ -106,7 +107,15 @@ int main() {
     set_terminal_raw();
     std::cout << "\033[?25l"; // 隐藏光标
 
+    // 获取视频帧率
+    double frame_rate = av_q2d(format_ctx->streams[video_stream_index]->avg_frame_rate);
+    if (frame_rate <= 0.0) {
+        frame_rate = 30.0; // 默认30fps
+    }
+    const double frame_delay = 1'000'000 / frame_rate; // 每帧延迟（微秒）
+
     // 主循环：读取并显示视频帧
+    auto start_time = std::chrono::high_resolution_clock::now();
     while (av_read_frame(format_ctx, packet) >= 0) {
         if (packet->stream_index == video_stream_index) {
             avcodec_send_packet(codec_ctx, packet);
@@ -122,13 +131,21 @@ int main() {
                 for (int y = 0; y < term_h; y++) {
                     for (int x = 0; x < term_w; x++) {
                         uint8_t lum = gray_frame->data[0][y * gray_frame->linesize[0] + x];
-                        
                         int index = static_cast<int>((lum / 255.0) * (strlen(ASCII) - 1));
                         std::cout << ASCII[index];
                     }
                     std::cout << std::endl;
                 }
-                usleep(1000000 / codec_ctx->framerate.num); // 控制帧率
+
+                // 精确帧率控制
+                auto end_time = std::chrono::high_resolution_clock::now();
+                auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+                auto remaining = std::chrono::microseconds(static_cast<int>(frame_delay)) - elapsed;
+
+                if (remaining.count() > 0) {
+                    usleep(remaining.count());
+                }
+                start_time = std::chrono::high_resolution_clock::now();
             }
         }
         av_packet_unref(packet);
