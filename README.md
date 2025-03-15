@@ -23,7 +23,7 @@ pkg install ffmpeg clang
 将代码保存为 `main.cpp`，然后使用以下命令编译：
 
 ```bash
-g++ -std=c++11 -o ascii_video main.cpp -lavformat -lavcodec -lswscale -lavutil -lm
+g++ -o ascii_video main.cpp -lavformat -lavcodec -lswscale -lavutil -lm
 ```
 
 ### 3. 运行程序
