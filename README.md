@@ -51,42 +51,6 @@ g++ -o ascii_video main.cpp -lavformat -lavcodec -lswscale -lavutil -lm
 - **终端尺寸**：自动检测终端窗口大小并调整输出分辨率。
 - **帧率控制**：根据视频的帧率动态调整播放速度。
 
-## 示例
-
-### 测试视频生成
-
-可以使用以下命令生成一个测试视频：
-
-```bash
-ffmpeg -f lavfi -i testsrc=duration=10:size=640x480:rate=30 test.mp4
-```
-
-然后将 `test.mp4` 重命名为 `in.mp4` 并运行程序。
-
-## 常见问题
-
-### 1. 播放速度过快
-
-确保编译时启用了高精度计时器（`-std=c++11`），并检查视频的帧率是否正确解析。
-
-### 2. 终端显示错乱
-
-- 确保终端支持 ANSI 转义码。
-- 调整终端窗口大小以获得最佳显示效果。
-
-### 3. 编译错误
-
-- 确保安装了所有依赖库（`ffmpeg` 和 `clang`）。
-- 如果出现链接错误，尝试调整库的顺序：
-  ```bash
-  g++ -std=c++11 -o ascii_video main.cpp -lavformat -lavcodec -lswscale -lavutil -lm
-  ```
-
-### 4. 视频无法播放
-
-- 检查视频文件路径和格式。
-- 使用 `ffmpeg -i in.mp4` 确认视频文件是否有效。
-
 ## 性能优化
 
 - **降低分辨率**：使用较小的终端窗口以减少渲染负载。
@@ -112,6 +76,7 @@ ffmpeg -f lavfi -i testsrc=duration=10:size=640x480:rate=30 test.mp4
 
 - **OTFiles** - 项目开发者
 - **GitHub**: [OTFiles](https://github.com/OTFiles)
+- **BiliBili**: [OTFiles](https://b23.tv/r9qzgLy)
 
 ## 致谢
 
